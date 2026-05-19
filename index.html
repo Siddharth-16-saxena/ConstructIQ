@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ConstructIQ | Smart Construction Operations</title>
+    <meta
+      name="description"
+      content="ConstructIQ unifies construction schedules, budgets, field logs, documents, and IoT sensor alerts in one predictive operations platform."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="ConstructIQ home">
+        <span class="brand-mark">CIQ</span>
+        <span>ConstructIQ</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#platform">Platform</a>
+        <a href="#field">Field App</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#demo">Demo</a>
+      </nav>
+      <a class="nav-cta" href="#demo">Book demo</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-overlay" aria-hidden="true"></div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Predictive project control for $0.5-50M builds</p>
+            <h1 id="hero-title">ConstructIQ</h1>
+            <p class="hero-lede">
+              A construction operations command center that connects schedules, budget burn,
+              site sensors, safety workflows, and field documentation before small delays become
+              expensive ones.
+            </p>
+            <div class="hero-actions">
+              <a class="button primary" href="#demo">Run live demo</a>
+              <a class="button secondary" href="#platform">Explore platform</a>
+            </div>
+            <div class="hero-proof" aria-label="Key outcomes">
+              <span><strong>21%</strong> fewer delay days</span>
+              <span><strong>8 hr</strong> faster daily reports</span>
+              <span><strong>4.8x</strong> safety response lift</span>
+            </div>
+          </div>
+
+          <section class="ops-console" aria-label="Interactive operations preview">
+            <div class="console-topline">
+              <div>
+                <span class="status-dot"></span>
+                <span>Harbor Point Tower</span>
+              </div>
+              <span class="pill">Live site sync</span>
+            </div>
+            <div class="metric-grid">
+              <article>
+                <span>Schedule confidence</span>
+                <strong id="heroSchedule">86%</strong>
+              </article>
+              <article>
+                <span>Budget variance</span>
+                <strong id="heroBudget">-3.4%</strong>
+              </article>
+              <article>
+                <span>Active alerts</span>
+                <strong id="heroAlerts">7</strong>
+              </article>
+            </div>
+            <div class="mini-chart" aria-label="Budget and progress chart">
+              <span style="height: 46%"></span>
+              <span style="height: 62%"></span>
+              <span style="height: 54%"></span>
+              <span style="height: 76%"></span>
+              <span style="height: 68%"></span>
+              <span style="height: 86%"></span>
+              <span style="height: 73%"></span>
+              <span style="height: 92%"></span>
+            </div>
+            <div class="site-map">
+              <div class="zone zone-a">A</div>
+              <div class="zone zone-b">B</div>
+              <div class="zone zone-c">C</div>
+              <div class="sensor sensor-hot" title="High CO2 in confined space"></div>
+              <div class="sensor sensor-idle" title="Crane idle for 30 minutes"></div>
+              <div class="sensor sensor-ok" title="Crew wearable check-in stable"></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="trusted-band" aria-label="Platform summary">
+        <span>Built for general contractors</span>
+        <span>MQTT + WebSocket telemetry</span>
+        <span>AI delay prediction</span>
+        <span>Offline field sync</span>
+      </section>
+
+      <section id="platform" class="section platform-section" aria-labelledby="platform-title">
+        <div class="section-heading">
+          <p class="eyebrow">One operations layer</p>
+          <h2 id="platform-title">Replace project silos with a live control room.</h2>
+          <p>
+            ConstructIQ turns schedules, budget data, blueprints, RFIs, daily logs, and sensor feeds
+            into one shared project truth for owners, office teams, and site crews.
+          </p>
+        </div>
+
+        <div class="feature-layout">
+          <article class="feature-panel">
+            <div class="feature-icon">01</div>
+            <h3>Predict delays early</h3>
+            <p>
+              AI compares task velocity, crew capacity, weather exposure, and historical slippage to
+              flag schedule risk while supervisors can still re-sequence work.
+            </p>
+          </article>
+          <article class="feature-panel">
+            <div class="feature-icon">02</div>
+            <h3>Track burn in context</h3>
+            <p>
+              Budget graphs connect spend, hours, materials, and change orders directly to the
+              schedule so cost variance is never detached from site reality.
+            </p>
+          </article>
+          <article class="feature-panel">
+            <div class="feature-icon">03</div>
+            <h3>Fuse IoT and field logs</h3>
+            <p>
+              Equipment trackers, safety wearables, temperature, humidity, and CO2 sensors flow into
+              the same alert stream as checklists and daily reports.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section lab-section" aria-labelledby="lab-title">
+        <div class="dashboard-shell">
+          <div class="dashboard-header">
+            <div>
+              <p class="eyebrow">Interactive what-if lab</p>
+              <h2 id="lab-title">Stress-test a project plan in seconds.</h2>
+            </div>
+            <div class="scenario-tabs" role="group" aria-label="Scenario controls">
+              <button class="scenario-btn active" data-scenario="baseline">Baseline</button>
+              <button class="scenario-btn" data-scenario="shortage">Crew shortage</button>
+              <button class="scenario-btn" data-scenario="sensor">Sensor event</button>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="kpi-card">
+              <span>Projected finish</span>
+              <strong id="finishDate">Sep 18</strong>
+              <small id="finishDelta">On target</small>
+            </article>
+            <article class="kpi-card">
+              <span>Delay risk</span>
+              <strong id="delayRisk">14%</strong>
+              <small id="riskDelta">Low exposure</small>
+            </article>
+            <article class="kpi-card">
+              <span>Forecast overrun</span>
+              <strong id="overrun">$42k</strong>
+              <small id="overrunDelta">Within contingency</small>
+            </article>
+            <article class="kpi-card accent">
+              <span>Recommended action</span>
+              <strong id="recommendation">Pull plumbing QA forward</strong>
+              <small id="recommendationDelta">Saves 2.5 days</small>
+            </article>
+
+            <article class="timeline-card">
+              <div class="card-heading">
+                <h3>Schedule optimizer</h3>
+                <span id="timelineLabel">Week 18-22</span>
+              </div>
+              <div class="gantt">
+                <div class="gantt-row">
+                  <span>Framing</span>
+                  <div><b class="bar steel" id="barFraming"></b></div>
+                </div>
+                <div class="gantt-row">
+                  <span>MEP rough-in</span>
+                  <div><b class="bar copper" id="barMep"></b></div>
+                </div>
+                <div class="gantt-row">
+                  <span>Inspection</span>
+                  <div><b class="bar green" id="barInspection"></b></div>
+                </div>
+                <div class="gantt-row">
+                  <span>Drywall</span>
+                  <div><b class="bar navy" id="barDrywall"></b></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="alerts-card">
+              <div class="card-heading">
+                <h3>Real-time alerts</h3>
+                <span id="alertCount">7 live</span>
+              </div>
+              <div class="alert-list" id="alertList" aria-live="polite"></div>
+            </article>
+
+            <article class="budget-card">
+              <div class="card-heading">
+                <h3>Budget burn-down</h3>
+                <span id="budgetLabel">68% spent</span>
+              </div>
+              <canvas id="budgetCanvas" width="600" height="280" aria-label="Budget burn-down graph"></canvas>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="field" class="section field-section" aria-labelledby="field-title">
+        <div class="phone-frame" aria-label="Mobile field app preview">
+          <div class="phone-top"></div>
+          <div class="phone-screen">
+            <div class="mobile-header">
+              <span>Daily log</span>
+              <b>07:42</b>
+            </div>
+            <div class="upload-tile">
+              <span class="camera-glyph"></span>
+              <strong>18 photos synced</strong>
+              <small>Level 4 curtain wall</small>
+            </div>
+            <div class="checklist">
+              <label><input type="checkbox" checked /> PPE inspection</label>
+              <label><input type="checkbox" checked /> Scaffold tag</label>
+              <label><input type="checkbox" /> Concrete cylinder report</label>
+            </div>
+            <button class="mobile-button" type="button">Submit field update</button>
+          </div>
+        </div>
+        <div class="field-copy">
+          <p class="eyebrow">React Native field app</p>
+          <h2 id="field-title">Crews update the plan from the jobsite.</h2>
+          <p>
+            Workers submit logs, photos, checklists, incidents, and task progress offline. Supervisors
+            annotate drawings, resolve RFIs, and push updates back to the dashboard once the device
+            reconnects.
+          </p>
+          <div class="field-list">
+            <span>Offline-first sync</span>
+            <span>Blueprint annotation</span>
+            <span>Incident workflows</span>
+            <span>Role-based access</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section architecture-section" aria-labelledby="architecture-title">
+        <div class="section-heading compact">
+          <p class="eyebrow">Built to scale</p>
+          <h2 id="architecture-title">A practical cloud architecture for construction operations.</h2>
+        </div>
+        <div class="architecture-flow" aria-label="Backend architecture">
+          <div>Field App</div>
+          <div>Dashboard</div>
+          <div>API Gateway</div>
+          <div>Project Service</div>
+          <div>IoT Service</div>
+          <div>ML Service</div>
+          <div>MongoDB Atlas</div>
+          <div>AWS IoT Edge Buffer</div>
+        </div>
+      </section>
+
+      <section id="pricing" class="section pricing-section" aria-labelledby="pricing-title">
+        <div class="section-heading">
+          <p class="eyebrow">Mid-market pricing</p>
+          <h2 id="pricing-title">Start with project control. Add intelligence as you grow.</h2>
+        </div>
+        <div class="pricing-grid">
+          <article class="price-card">
+            <h3>Basic</h3>
+            <strong>$499<span>/project mo</span></strong>
+            <p>Schedule, budget, documents, field logs, and compliance checklists for one active project.</p>
+            <a class="button secondary" href="#demo">Start lean</a>
+          </article>
+          <article class="price-card featured">
+            <h3>Operations</h3>
+            <strong>$1,499<span>/mo</span></strong>
+            <p>Up to 10 projects, sensor ingestion, live alerts, role permissions, and executive reports.</p>
+            <a class="button primary" href="#demo">Most popular</a>
+          </article>
+          <article class="price-card">
+            <h3>Intelligence</h3>
+            <strong>Custom</strong>
+            <p>AI scheduling, what-if planning, custom IoT integrations, SSO, and dedicated onboarding.</p>
+            <a class="button secondary" href="#demo">Talk to sales</a>
+          </article>
+        </div>
+      </section>
+
+      <section id="demo" class="section demo-section" aria-labelledby="demo-title">
+        <div class="demo-card">
+          <div>
+            <p class="eyebrow">ROI calculator</p>
+            <h2 id="demo-title">Estimate delay savings for your next project.</h2>
+            <p>
+              Adjust project size and weekly delay cost to see how predictive scheduling and live site
+              alerts can change the economics of a mid-market build.
+            </p>
+          </div>
+          <form class="roi-form">
+            <label>
+              Project value
+              <input id="projectValue" type="range" min="500000" max="50000000" value="12500000" step="500000" />
+              <span id="projectValueLabel">$12.5M</span>
+            </label>
+            <label>
+              Weekly delay cost
+              <input id="delayCost" type="range" min="10000" max="300000" value="85000" step="5000" />
+              <span id="delayCostLabel">$85k</span>
+            </label>
+            <div class="roi-result">
+              <span>Projected annual savings</span>
+              <strong id="savings">$552k</strong>
+            </div>
+            <a class="button primary full" href="mailto:sales@constructiq.example">Request pilot</a>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>ConstructIQ</span>
+      <span>Smart Construction Operations</span>
+      <a href="#top">Back to top</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
