@@ -108,15 +108,7 @@ function ScrollProgress() {
   );
 }
 
-function AvatarStack() {
-  return (
-    <div className="avatar-stack" aria-label="Collaborators online">
-      {["K", "S", "M", "A"].map((item) => (
-        <span key={item}>{item}</span>
-      ))}
-    </div>
-  );
-}
+
 
 function Header({ theme, toggleTheme }) {
   return (
@@ -189,8 +181,7 @@ function Hero() {
           src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=700&q=85"
           alt="A planning meeting"
         />
-        <AvatarStack />
-        <div className="name-tag hover-wiggle">Tejasree Momula</div>
+
       </div>
 
       <div className="hero-footer load-fade-in-delayed">
@@ -223,8 +214,7 @@ function ProgressBlock() {
           </p>
           <a className="text-link" href="#offer">Read more</a>
         </div>
-        <AvatarStack />
-        <div className="name-tag name-tag-bottom hover-wiggle">Kola Nadiya</div>
+
       </ScrollReveal>
     </section>
   );
