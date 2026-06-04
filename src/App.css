@@ -9,6 +9,8 @@
   --violet: #8d4df4;
   --line: #e8e4dd;
   --shadow: 0 24px 70px rgba(17, 17, 17, 0.12);
+  --header-bg: rgba(255, 253, 248, 0.88);
+  --hover-bg: #2a2a2a;
 }
 
 * {
@@ -52,7 +54,7 @@ img {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
   padding: 18px 0;
-  background: rgba(255, 253, 248, 0.88);
+  background: var(--header-bg);
   backdrop-filter: blur(16px);
 }
 
@@ -77,7 +79,7 @@ footer {
   height: 36px;
   place-items: center;
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
   border-radius: 50%;
   font-family: "Syne", Arial, sans-serif;
 }
@@ -106,7 +108,7 @@ button {
   padding: 0 18px;
   border: 0;
   background: var(--ink);
-  color: #fff;
+  color: var(--paper);
   border-radius: 999px;
   font-weight: 800;
   cursor: pointer;
@@ -115,8 +117,8 @@ button {
 .header-cta:hover,
 button:hover {
   transform: translateY(-2px);
-  background: #2a2a2a;
-  color: #fff;
+  background: var(--hover-bg);
+  color: var(--paper);
 }
 
 .hero-section,
@@ -905,4 +907,132 @@ footer {
 }
 .frame-box:hover {
   box-shadow: 0 24px 60px rgba(141, 77, 244, 0.08);
+}
+
+/* --- THEME CUSTOM VARIABLES & SCROLL PROGRESS BAR --- */
+
+[data-theme="dark"] {
+  --ink: #f4f4f7;
+  --muted: #a1a1aa;
+  --paper: #09090b;
+  --mint: #14281d;
+  --line: #27272a;
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  --lime: #c5d836;
+  --violet: #a78bfa;
+  --header-bg: rgba(9, 9, 11, 0.88);
+  --hover-bg: #ffffff;
+}
+
+/* Smooth globally-managed theme transitions */
+body {
+  transition: background-color 0.40s ease, color 0.40s ease;
+}
+
+.site-header {
+  transition: background-color 0.40s ease, border-color 0.40s ease;
+}
+
+.site-header a, nav a, .header-cta, button {
+  transition: background-color 0.40s ease, color 0.40s ease, transform 0.25s ease, border-color 0.40s ease;
+}
+
+/* Header Action Layout & Theme Toggler */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line) !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.theme-toggle:hover {
+  background-color: var(--line) !important;
+  transform: scale(1.08) rotate(15deg) !important;
+}
+
+.theme-toggle svg {
+  display: block;
+}
+
+/* Scroll Progress Indicator Bar */
+.scroll-progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--violet), var(--coral));
+  z-index: 9999;
+  transition: width 0.15s ease-out;
+}
+
+/* Interactive Success Banner for Newsletter */
+.newsletter-success {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  animation: fadeInScale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-theme="light"] .newsletter-success {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.newsletter-success div h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  color: var(--ink);
+}
+
+.newsletter-success div p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.checkmark-icon {
+  flex-shrink: 0;
+  color: var(--violet);
+  animation: popScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popScale {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.reset-btn {
+  margin-left: auto;
+  background: transparent !important;
+  border: 1px solid var(--line) !important;
+  color: var(--muted) !important;
+  font-size: 0.8rem;
+  min-height: 32px !important;
+  padding: 0 12px !important;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+  color: var(--paper) !important;
+  background: var(--ink) !important;
+  transform: translateY(-1px) !important;
 }

@@ -83,6 +83,31 @@ function ScrollReveal({ children, className = "", delay = 0, threshold = 0.1 }) 
   );
 }
 
+function ScrollProgress() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        const scrolled = (window.scrollY / totalScroll) * 100;
+        setProgress(scrolled);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div
+      className="scroll-progress-container"
+      style={{ width: `${progress}%` }}
+      aria-hidden="true"
+    />
+  );
+}
+
 function AvatarStack() {
   return (
     <div className="avatar-stack" aria-label="Collaborators online">
@@ -93,7 +118,7 @@ function AvatarStack() {
   );
 }
 
-function Header() {
+function Header({ theme, toggleTheme }) {
   return (
     <header className="site-header load-fade-in">
       <a className="brand" href="#top" aria-label="Progress Studio home">
@@ -106,7 +131,32 @@ function Header() {
         <a href="#reviews">Reviews</a>
         <a href="#contact">Contact</a>
       </nav>
-      <a className="header-cta" href="#contact">Let's talk</a>
+      <div className="header-actions">
+        <button
+          className="theme-toggle"
+          onClick={toggleTheme}
+          aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+        >
+          {theme === "light" ? (
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          )}
+        </button>
+        <a className="header-cta" href="#contact">Let's talk</a>
+      </div>
     </header>
   );
 }
@@ -240,6 +290,21 @@ function Testimonials() {
 }
 
 function Newsletter() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) {
+      return;
+    }
+    setStatus("submitting");
+    setTimeout(() => {
+      setStatus("success");
+      setEmail("");
+    }, 700);
+  };
+
   return (
     <section className="newsletter-section" id="contact">
       <ScrollReveal className="newsletter-left">
@@ -247,22 +312,60 @@ function Newsletter() {
         <h2>Stay close to the next useful idea.</h2>
       </ScrollReveal>
       <ScrollReveal className="newsletter-right" delay={150}>
-        <form>
-          <label htmlFor="email">Email address</label>
-          <div className="form-row">
-            <input id="email" type="email" placeholder="hello@example.com" />
-            <button type="submit">Subscribe</button>
+        {status === "success" ? (
+          <div className="newsletter-success">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="checkmark-icon">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <div>
+              <h3>You're on the list!</h3>
+              <p>We'll email you with our next progress update.</p>
+            </div>
+            <button onClick={() => setStatus("idle")} className="reset-btn">Change email</button>
           </div>
-        </form>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="email">Email address</label>
+            <div className="form-row">
+              <input
+                id="email"
+                type="email"
+                placeholder="hello@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={status === "submitting"}
+                required
+              />
+              <button type="submit" disabled={status === "submitting"}>
+                {status === "submitting" ? "Subscribing..." : "Subscribe"}
+              </button>
+            </div>
+          </form>
+        )}
       </ScrollReveal>
     </section>
   );
 }
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   return (
     <>
-      <Header />
+      <ScrollProgress />
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
         <Hero />
         <ProgressBlock />
