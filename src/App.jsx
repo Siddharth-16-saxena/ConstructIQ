@@ -19,38 +19,13 @@ import {
   Mail,
   RefreshCw,
   Info,
-  Clock
+  Clock,
+  Search,
+  FolderOpen,
+  ClipboardList
 } from "lucide-react";
 
-// Default services matching Jhontraktor structure
-const servicesList = [
-  {
-    id: "industrial",
-    icon: Building2,
-    title: "Industrial Construction",
-    desc: "Heavy-duty manufacturing plants, distribution warehouses, and advanced logistical hubs engineered for extreme load capacities."
-  },
-  {
-    id: "steel",
-    icon: HardHat,
-    title: "Structural Steel Framing",
-    desc: "Precision steel fabrication, erection, and column layout alignment designed to withstand seismic and structural stresses."
-  },
-  {
-    id: "mechanical",
-    icon: Wrench,
-    title: "Mechanical & Electrical",
-    desc: "Complex MEP systems, HVAC duct routing, power substation integration, and high-efficiency smart lighting networks."
-  },
-  {
-    id: "commercial",
-    icon: Activity,
-    title: "Commercial & Residential",
-    desc: "Premium mid-rise corporate office towers, retail developments, and high-end residential housing spaces."
-  }
-];
-
-// Default projects list
+// Portfolio/Projects list matching JhonTraktor
 const initialProjects = [
   {
     id: 1,
@@ -83,36 +58,31 @@ const initialProjects = [
 ];
 
 export default function App() {
-  // Theme state
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   // API states
   const [tasks, setTasks] = useState([]);
   const [summary, setSummary] = useState({
     activeAlertsCount: 0,
-    totalBudget: 0,
-    projectProgress: 0,
+    totalBudget: 4200000,
+    projectProgress: 68,
     projectName: "ConstructIQ Plaza Hub",
     location: "Sector 62, Commercial Corridor",
     startDate: "2026-04-01"
   });
   const [alerts, setAlerts] = useState([]);
   const [backendLive, setBackendLive] = useState(false);
-  const [savedScenarios, setSavedScenarios] = useState([]);
 
   // Sliders for What-If Sandbox
-  const [weatherSlider, setWeatherSlider] = useState(0); // 0 to 100
-  const [supplyChainSlider, setSupplyChainSlider] = useState(0); // 0 to 100
-  const [laborSlider, setLaborSlider] = useState(0); // 0 to 100
-
-  // State to save current scenario
-  const [scenarioNameInput, setScenarioNameInput] = useState("");
-  const [showScenarioModal, setShowScenarioModal] = useState(false);
+  const [weatherSlider, setWeatherSlider] = useState(0); 
+  const [supplyChainSlider, setSupplyChainSlider] = useState(0); 
+  const [laborSlider, setLaborSlider] = useState(0); 
 
   // ROI Calculator states
-  const [roiBudget, setRoiBudget] = useState(5000000); // 1M to 50M
-  const [roiDelayMonths, setRoiDelayMonths] = useState(3); // 1 to 12
-  const [roiLaborRate, setRoiLaborRate] = useState(120); // 50 to 250
+  const [roiBudget, setRoiBudget] = useState(5000000); 
+  const [roiDelayMonths, setRoiDelayMonths] = useState(3); 
+  const [roiLaborRate, setRoiLaborRate] = useState(120); 
   const [roiScenarioName, setRoiScenarioName] = useState("");
   const [savedRoiScenarios, setSavedRoiScenarios] = useState([]);
 
@@ -131,7 +101,6 @@ export default function App() {
   // Fetch Dashboard & Alerts
   const fetchData = async () => {
     try {
-      // Fetch Dashboard details
       const dashRes = await fetch("/api/dashboard");
       if (dashRes.ok) {
         const dashData = await dashRes.json();
@@ -140,14 +109,12 @@ export default function App() {
         setBackendLive(true);
       }
 
-      // Fetch IoT alerts
       const alertsRes = await fetch("/api/alerts");
       if (alertsRes.ok) {
         const alertsData = await alertsRes.json();
         setAlerts(alertsData || []);
       }
 
-      // Fetch saved ROI scenarios
       const roiRes = await fetch("/api/roi");
       if (roiRes.ok) {
         const roiData = await roiRes.json();
@@ -156,19 +123,16 @@ export default function App() {
     } catch (err) {
       console.warn("Could not connect to backend. Falling back to local data modes.", err);
       setBackendLive(false);
-      // Fallback local tasks
       setTasks([
-        { id: 1, name: "Site Excavation & Grading", duration_days: 10, progress: 100, delay_risk: "Low", labor_cost: 15000, material_cost: 5000, sequence_order: 1 },
-        { id: 2, name: "Foundation & Concrete Pouring", duration_days: 15, progress: 80, delay_risk: "Medium", labor_cost: 25000, material_cost: 40000, sequence_order: 2 },
-        { id: 3, name: "Structural Steel Framing", duration_days: 20, progress: 45, delay_risk: "High", labor_cost: 35000, material_cost: 85000, sequence_order: 3 },
-        { id: 4, name: "Roofing & Exterior Cladding", duration_days: 12, progress: 0, delay_risk: "Medium", labor_cost: 20000, material_cost: 30000, sequence_order: 4 },
-        { id: 5, name: "HVAC & Electrical Rough-Ins", duration_days: 18, progress: 0, delay_risk: "Medium", labor_cost: 30000, material_cost: 25000, sequence_order: 5 },
-        { id: 6, name: "Interior Finishes & Painting", duration_days: 14, progress: 0, delay_risk: "Low", labor_cost: 18000, material_cost: 12000, sequence_order: 6 }
+        { id: 1, name: "Site Prep", duration_days: 12, progress: 100, delay_risk: "Low", labor_cost: 15000, material_cost: 5000, sequence_order: 1 },
+        { id: 2, name: "Foundation", duration_days: 18, progress: 100, delay_risk: "Medium", labor_cost: 25000, material_cost: 40000, sequence_order: 2 },
+        { id: 3, name: "Framing", duration_days: 22, progress: 60, delay_risk: "High", labor_cost: 35000, material_cost: 85000, sequence_order: 3 },
+        { id: 4, name: "Plumbing", duration_days: 15, progress: 10, delay_risk: "Medium", labor_cost: 20000, material_cost: 30000, sequence_order: 4 }
       ]);
       setAlerts([
-        { id: 1, sensor_type: "Wind Speed Sensor", value: "42 mph", status: "Active", message: "Crane wind speed registered at 42 mph. Recommended safety limit is 35 mph. Operations suspended.", timestamp: new Date().toISOString() },
-        { id: 2, sensor_type: "Concrete Moisture Sensor", value: "88% RH", status: "Active", message: "Concrete slab Section B moisture level is 88%. Flooring application requires moisture level < 75%.", timestamp: new Date().toISOString() },
-        { id: 3, sensor_type: "Supply Chain", value: "Steel shipment delay", status: "Active", message: "Structural Steel shipment is delayed by 4 days due to port customs clearance congestion.", timestamp: new Date().toISOString() }
+        { id: 1, sensor_type: "Wind Speed Sensor", value: "25 mph", status: "Active", message: "[Alert] High Wind (25 mph) / Crane 1", timestamp: new Date().toISOString() },
+        { id: 2, sensor_type: "Concrete Pour Probes", value: "95°F", status: "Active", message: "[Alert] Temp (95°F) / Concrete Pour", timestamp: new Date().toISOString() },
+        { id: 3, sensor_type: "Acoustic Decibel sensor", value: "88dB", status: "Active", message: "[Warning] Noise (88dB) / Site B", timestamp: new Date().toISOString() }
       ]);
     }
   };
@@ -177,7 +141,6 @@ export default function App() {
     fetchData();
   }, []);
 
-  // Set html document attribute for theme
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -188,23 +151,19 @@ export default function App() {
   };
 
   // ---------------- WHAT-IF CALCULATIONS ----------------
-  // Calculate delay factors based on sliders
-  const weatherDelayMultiplier = 1 + (weatherSlider / 100) * 0.5; // Up to 50% increase
-  const supplyChainDelayMultiplier = 1 + (supplyChainSlider / 100) * 0.4; // Up to 40% increase
-  const laborDelayMultiplier = 1 + (laborSlider / 100) * 0.3; // Up to 30% increase
-
+  const weatherDelayMultiplier = 1 + (weatherSlider / 100) * 0.4;
+  const supplyChainDelayMultiplier = 1 + (supplyChainSlider / 100) * 0.3;
+  const laborDelayMultiplier = 1 + (laborSlider / 100) * 0.2;
   const combinedMultiplier = weatherDelayMultiplier * supplyChainDelayMultiplier * laborDelayMultiplier;
 
-  // Calculate simulated project statistics
-  const baseDuration = tasks.reduce((acc, t) => acc + t.duration_days, 0);
+  const baseDuration = 67; // Site Prep (12) + Foundation (18) + Framing (22) + Plumbing (15)
   const simulatedDuration = Math.round(baseDuration * combinedMultiplier);
   const totalDelayDays = simulatedDuration - baseDuration;
 
-  // Financial impact: $1,250 overhead penalty per day of delay, plus labor escalation cost
-  const baseLaborCost = tasks.reduce((acc, t) => acc + t.labor_cost, 0);
-  const simulatedLaborCost = baseLaborCost * (1 + (laborSlider / 100) * 0.15) * (simulatedDuration / baseDuration);
-  const overheadCostIncrease = totalDelayDays * 1500;
-  const totalFinancialImpact = Math.round((simulatedLaborCost - baseLaborCost) + overheadCostIncrease);
+  // Budget calculations
+  const baseBudget = 4200000; // $4.2M
+  const maxBudget = 12000000; // $12M
+  const simulatedBudget = Math.min(maxBudget, Math.round(baseBudget + (totalDelayDays * 75000) + (laborSlider * 25000)));
 
   // ---------------- IoT ALERTS RESOLVING ----------------
   const handleResolveAlert = async (id) => {
@@ -212,11 +171,10 @@ export default function App() {
       try {
         const res = await fetch(`/api/alerts/${id}/resolve`, { method: "POST" });
         if (res.ok) {
-          // Update status locally
           setAlerts((prev) =>
             prev.map((a) => (a.id === id ? { ...a, status: "Resolved" } : a))
           );
-          // Refresh dashboard
+          // Sync summary
           const dashRes = await fetch("/api/dashboard");
           if (dashRes.ok) {
             const dashData = await dashRes.json();
@@ -227,7 +185,6 @@ export default function App() {
         console.error("Error resolving alert:", err);
       }
     } else {
-      // Local resolve fallback
       setAlerts((prev) =>
         prev.map((a) => (a.id === id ? { ...a, status: "Resolved" } : a))
       );
@@ -258,7 +215,6 @@ export default function App() {
         const data = await res.json();
         if (res.ok) {
           setFormFeedback({ type: "success", text: data.message });
-          // Reset form
           setContactName("");
           setContactEmail("");
           setContactPhone("");
@@ -270,11 +226,10 @@ export default function App() {
         setFormFeedback({ type: "error", text: "Connection error. Could not reach server." });
       }
     } else {
-      // Mock submit
       setTimeout(() => {
         setFormFeedback({
           type: "success",
-          text: "Mock Successful! (Local Mode: Forms will store in database when backend is connected)"
+          text: "Mock Successful! Inquiry logged in SQLite backend simulated."
         });
         setContactName("");
         setContactEmail("");
@@ -286,7 +241,6 @@ export default function App() {
   };
 
   // ---------------- ROI CALCULATOR SAVING ----------------
-  // Saves calculation results to DB
   const calculatedSavings = Math.round(roiBudget * 0.015 * roiDelayMonths + roiLaborRate * 8 * 22 * roiDelayMonths * 0.25);
 
   const handleSaveRoiScenario = async (e) => {
@@ -318,7 +272,6 @@ export default function App() {
         console.error("Error saving ROI scenario:", err);
       }
     } else {
-      // Local fallback
       setSavedRoiScenarios((prev) => [
         {
           id: Date.now(),
@@ -335,388 +288,448 @@ export default function App() {
     }
   };
 
-  // Reset Sliders
   const handleResetSliders = () => {
     setWeatherSlider(0);
     setSupplyChainSlider(0);
     setLaborSlider(0);
   };
 
-  // Filters portfolio
   const filteredProjects = initialProjects.filter(
     (p) => portfolioFilter === "all" || p.category === portfolioFilter
   );
 
   return (
     <div className="app-container">
-      {/* ----------------- TOP NAVBAR ----------------- */}
-      <header className="navbar header-slide-in">
+      {/* ----------------- TOP NAVBAR (Refined to match layout reference) ----------------- */}
+      <header className="navbar">
         <div className="navbar-logo">
-          <div className="logo-box">🏗️</div>
-          <span className="logo-text">Construct<span className="logo-accent">IQ</span></span>
+          {/* Hexagonal yellow logo */}
+          <div className="logo-hex">
+            <svg viewBox="0 0 100 100" className="hex-svg">
+              <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="#f59e0b" />
+              <polygon points="50,15 85,32 85,68 50,85 15,68 15,32" fill="#0a0e17" />
+              <path d="M40 35 L65 35 L45 65 L60 65" stroke="#f59e0b" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <span className="logo-text uppercase">Construct<span className="logo-accent">IQ</span></span>
         </div>
         
+        {/* Navigation Tabs matches 2nd image */}
         <nav className="navbar-links" aria-label="Main Navigation">
-          <a href="#home">Home</a>
-          <a href="#sandbox">Delay Sandbox</a>
-          <a href="#alerts">IoT Alerts</a>
-          <a href="#services">Services</a>
-          <a href="#portfolio">Showcase</a>
-          <a href="#roi">ROI Calculator</a>
-          <a href="#contact">Contact</a>
+          <button 
+            onClick={() => { setActiveTab("dashboard"); window.scrollTo({top: 0, behavior: 'smooth'}); }}
+            className={`nav-tab-btn ${activeTab === "dashboard" ? "active" : ""}`}
+          >
+            Dashboard
+          </button>
+          <a href="#portfolio" className="nav-tab-btn" onClick={() => setActiveTab("projects")}>Projects</a>
+          <a href="#services" className="nav-tab-btn" onClick={() => setActiveTab("equipment")}>Equipment</a>
+          <a href="#roi" className="nav-tab-btn" onClick={() => setActiveTab("safety")}>Safety</a>
+          <a href="#contact" className="nav-tab-btn" onClick={() => setActiveTab("reports")}>Reports</a>
         </nav>
 
         <div className="navbar-actions">
-          {/* Connection status tag */}
-          <div className={`status-tag ${backendLive ? "live" : "offline"}`}>
-            <span className="status-dot"></span>
-            <span>{backendLive ? "DB Connected" : "Local Mock"}</span>
+          {/* Search bar */}
+          <div className="search-bar-container">
+            <Search size={16} className="search-icon" />
+            <input type="text" placeholder="Search..." className="navbar-search" />
           </div>
 
-          {/* Theme toggle */}
+          {/* User profile */}
+          <div className="user-profile">
+            <img 
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" 
+              alt="Alex Rivera" 
+              className="user-avatar" 
+            />
+            <span className="user-name text-small font-highlight">Alex Rivera</span>
+          </div>
+
+          {/* Theme & connection */}
           <button onClick={toggleTheme} className="theme-btn" aria-label="Toggle theme">
-            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
           </button>
+          <div className={`status-tag ${backendLive ? "live" : "offline"}`} title={backendLive ? "SQLite Database Connected" : "Local Mock Mode"}>
+            <span className="status-dot"></span>
+          </div>
         </div>
       </header>
 
-      {/* ----------------- HERO SECTION ----------------- */}
-      <section id="home" className="hero-section">
-        <div className="hero-content">
-          <span className="hero-badge">Next-Generation Construction Intelligence</span>
-          <h1 className="hero-title">
-            SMART PROJECT CONTROL <br />
-            FOR MODERN BUILDERS
-          </h1>
-          <p className="hero-subtitle">
-            ConstructIQ brings blueprints, live IoT environmental sensors, and supply chain logistics together. Track budgets, run what-if delays in our sandbox, and mitigate risk before cranes stop.
-          </p>
-          <div className="hero-btns">
-            <a href="#sandbox" className="btn btn-primary">Launch Sandbox</a>
-            <a href="#contact" className="btn btn-outline">Schedule Trial</a>
+      {/* ----------------- CORE DASHBOARD (Matching Image 2 Layout) ----------------- */}
+      <main className="dashboard-layout mt-4">
+        
+        {/* Interactive Sliders embedded at dashboard top for visual sandbox controls */}
+        <div className="panel simulation-control-bar mb-4">
+          <div className="sim-bar-title">
+            <Sliders size={18} className="text-orange" />
+            <strong>What-If Sandbox Simulation Controls</strong>
+          </div>
+          <div className="sim-sliders-horizontal">
+            <div className="sim-slider-block">
+              <label>Weather Severity: <span className="font-highlight">{weatherSlider}%</span></label>
+              <input type="range" min="0" max="100" value={weatherSlider} onChange={(e) => setWeatherSlider(Number(e.target.value))} />
+            </div>
+            <div className="sim-slider-block">
+              <label>Supply Congestion: <span className="font-highlight">{supplyChainSlider}%</span></label>
+              <input type="range" min="0" max="100" value={supplyChainSlider} onChange={(e) => setSupplyChainSlider(Number(e.target.value))} />
+            </div>
+            <div className="sim-slider-block">
+              <label>Labor Shortage: <span className="font-highlight">{laborSlider}%</span></label>
+              <input type="range" min="0" max="100" value={laborSlider} onChange={(e) => setLaborSlider(Number(e.target.value))} />
+            </div>
+            <button onClick={handleResetSliders} className="btn btn-outline btn-sm reset-sim-btn">Reset</button>
           </div>
         </div>
 
-        {/* Hero metrics layout */}
-        <div className="hero-metrics-grid">
-          <div className="metric-card">
-            <div className="metric-header">
-              <span className="metric-title">Active Database Status</span>
-              <Activity size={16} className="metric-icon accent" />
+        <div className="dashboard-columns">
+          
+          {/* COLUMN 1: ACTIVE PROJECTS */}
+          <section className="panel col-active-projects">
+            <div className="panel-header-simple">
+              <h3>ACTIVE PROJECTS</h3>
+              <span className="threedots">•••</span>
             </div>
-            <span className="metric-value">{backendLive ? "SQLite Live" : "Fallback Local"}</span>
-            <span className="metric-desc">Form submissions & alerts persistent</span>
-          </div>
-          <div className="metric-card">
-            <div className="metric-header">
-              <span className="metric-title">Project Completion</span>
-              <Clock size={16} className="metric-icon" />
-            </div>
-            <span className="metric-value">{summary.projectProgress}%</span>
-            <span className="metric-desc">{summary.projectName} progress tracking</span>
-          </div>
-          <div className="metric-card text-alert">
-            <div className="metric-header">
-              <span className="metric-title">Live Sensor Alerts</span>
-              <ShieldAlert size={16} className="metric-icon" />
-            </div>
-            <span className="metric-value">{alerts.filter(a => a.status === 'Active').length}</span>
-            <span className="metric-desc">Requires immediate on-site attention</span>
-          </div>
-          <div className="metric-card">
-            <div className="metric-header">
-              <span className="metric-title">Base Project Budget</span>
-              <DollarSign size={16} className="metric-icon" />
-            </div>
-            <span className="metric-value">${(summary.totalBudget / 1000000).toFixed(1)}M</span>
-            <span className="metric-desc">Estimated direct tasks sum</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------- WHAT-IF SANDBOX SECTION ----------------- */}
-      <section id="sandbox" className="sandbox-section section-padding">
-        <div className="section-header">
-          <span className="kicker">Real-time Risk Simulator</span>
-          <h2>Interactive What-If Delay Sandbox</h2>
-          <p className="header-paragraph">
-            Simulate delays to project schedules by tweaking external variables. Instantly see visual changes to task schedules, critical path milestones, and overhead financial impact.
-          </p>
-        </div>
-
-        <div className="sandbox-grid">
-          {/* Slider Panel */}
-          <div className="panel sliders-panel">
-            <h3 className="panel-title">
-              <Sliders size={18} />
-              Adjust Project Variables
-            </h3>
             
-            <div className="slider-group">
-              <div className="slider-label">
-                <span>Weather Severity (Rain/Wind)</span>
-                <span className="slider-value font-highlight">{weatherSlider}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={weatherSlider}
-                onChange={(e) => setWeatherSlider(Number(e.target.value))}
-                className="range-input"
-              />
-              <span className="slider-helper">High values block crane lifts and cement drying.</span>
-            </div>
-
-            <div className="slider-group">
-              <div className="slider-label">
-                <span>Supply Chain Port Congestion</span>
-                <span className="slider-value font-highlight">{supplyChainSlider}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={supplyChainSlider}
-                onChange={(e) => setSupplyChainSlider(Number(e.target.value))}
-                className="range-input"
-              />
-              <span className="slider-helper">Port custom clearance delays steel and mechanical fixtures.</span>
-            </div>
-
-            <div className="slider-group">
-              <div className="slider-label">
-                <span>On-Site Crew Shortage</span>
-                <span className="slider-value font-highlight">{laborSlider}%</span>
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={laborSlider}
-                onChange={(e) => setLaborSlider(Number(e.target.value))}
-                className="range-input"
-              />
-              <span className="slider-helper">Sub-contractor shortages delay framing and interior details.</span>
-            </div>
-
-            <div className="panel-footer-btn">
-              <button onClick={handleResetSliders} className="btn btn-outline btn-sm">
-                Reset Simulators
-              </button>
-            </div>
-          </div>
-
-          {/* Results Summary Card */}
-          <div className="panel results-panel">
-            <h3 className="panel-title">
-              <TrendingUp size={18} />
-              Simulated Schedule & Cost Impacts
-            </h3>
-
-            <div className="results-metrics">
-              <div className="result-metric">
-                <span className="result-metric-label">Schedule Extension</span>
-                <div className="result-metric-main font-highlight text-orange">
-                  <span>+{totalDelayDays}</span>
-                  <small>Days</small>
+            <div className="projects-vertical-list">
+              <div className="project-list-card">
+                <div className="project-card-title">
+                  <FolderOpen size={16} className="text-orange" />
+                  <strong>Project Alpha</strong>
                 </div>
-                <span className="result-metric-footer">
-                  Project Duration: {simulatedDuration} days (Base: {baseDuration})
-                </span>
-              </div>
-
-              <div className="result-metric">
-                <span className="result-metric-label">Financial Budget Overhead</span>
-                <div className="result-metric-main font-highlight text-red">
-                  <span>+${totalFinancialImpact.toLocaleString()}</span>
-                </div>
-                <span className="result-metric-footer">
-                  Based on daily site penalties & labor overtime
-                </span>
-              </div>
-            </div>
-
-            <div className="simulation-notice text-small">
-              <Info size={14} className="notice-icon" />
-              <span>
-                Critical Path Alert: {totalDelayDays > 10 ? "Roofing and Mechanical rough-ins have violated their late-start buffer times." : "Schedule delay is within normal contingency buffer."}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Gantt Chart Timeline Visualization */}
-        <div className="gantt-container panel">
-          <div className="gantt-header">
-            <h3 className="panel-title">
-              <Calendar size={18} />
-              Simulated Construction Schedule (Gantt View)
-            </h3>
-            <span className="text-small text-muted font-mono">Orange bar denotes simulated delay extension</span>
-          </div>
-
-          <div className="gantt-chart">
-            <div className="gantt-timeline-axis">
-              <div className="axis-label flex-header">Construction Task Name</div>
-              <div className="axis-ticks">
-                <span>Wk 1</span>
-                <span>Wk 2</span>
-                <span>Wk 3</span>
-                <span>Wk 4</span>
-                <span>Wk 5</span>
-                <span>Wk 6</span>
-                <span>Wk 7</span>
-                <span>Wk 8</span>
-                <span>Wk 9</span>
-                <span>Wk 10</span>
-              </div>
-            </div>
-
-            {tasks.map((task) => {
-              // Calculate width and position
-              const baseWidth = (task.duration_days / baseDuration) * 100;
-              const extendedWidth = (task.duration_days * combinedMultiplier / baseDuration) * 100;
-              const delayDiffWidth = extendedWidth - baseWidth;
-
-              // Risk status colors
-              let riskClass = "risk-low";
-              if (task.delay_risk === "High") riskClass = "risk-high";
-              else if (task.delay_risk === "Medium") riskClass = "risk-medium";
-
-              return (
-                <div key={task.id} className="gantt-row">
-                  <div className="gantt-task-name">
-                    <span className="task-title">{task.name}</span>
-                    <span className={`badge-risk ${riskClass}`}>{task.delay_risk} Risk</span>
+                <div className="progress-details-block">
+                  <div className="progress-bar-container-simple">
+                    <div className="progress-fill yellow" style={{ width: "55%" }}></div>
                   </div>
+                  <div className="progress-row">
+                    <span className="percent font-highlight">55%</span>
+                    <span className="date font-mono text-small text-muted">Oct 2023 - Mar 2024</span>
+                  </div>
+                </div>
+              </div>
 
-                  <div className="gantt-bar-container">
-                    {/* Base Duration Bar */}
-                    <div
-                      className="gantt-bar-base"
-                      style={{ width: `${baseWidth}%` }}
+              <div className="project-list-card">
+                <div className="project-card-title">
+                  <FolderOpen size={16} className="text-orange" />
+                  <strong>Project Beta</strong>
+                </div>
+                <div className="progress-details-block">
+                  <div className="progress-bar-container-simple">
+                    <div className="progress-fill orange" style={{ width: "82%" }}></div>
+                  </div>
+                  <div className="progress-row">
+                    <span className="percent font-highlight">82%</span>
+                    <span className="date font-mono text-small text-muted">Nov 2023 - Jun 2024</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="project-list-card">
+                <div className="project-card-title">
+                  <FolderOpen size={16} className="text-orange" />
+                  <strong>Project Gamma</strong>
+                </div>
+                <div className="progress-details-block">
+                  <div className="progress-bar-container-simple">
+                    <div className="progress-fill yellow" style={{ width: "30%" }}></div>
+                  </div>
+                  <div className="progress-row">
+                    <span className="percent font-highlight">30%</span>
+                    <span className="date font-mono text-small text-muted">Jan 2024 - Sep 2024</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="carousel-indicators">
+              <span className="dot active"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </section>
+
+          {/* COLUMN 2: GANTT CHART TIMELINE */}
+          <section className="panel col-gantt-chart">
+            <div className="panel-header-simple">
+              <h3>GANTT CHART TIMELINE</h3>
+              <span className="threedots">•••</span>
+            </div>
+
+            {/* Gantt Chart Grid Area */}
+            <div className="gantt-wrapper">
+              <div className="gantt-months-header">
+                <div className="gantt-empty-header">Key Tasks</div>
+                <div className="gantt-month-ticks">
+                  <div className="month-label text-center">OCT 2023</div>
+                  <div className="month-label text-center">NOV 2023</div>
+                  <div className="month-label text-center">DEC 2023</div>
+                </div>
+              </div>
+
+              <div className="gantt-weeks-header">
+                <div className="gantt-empty-header"></div>
+                <div className="gantt-week-ticks font-mono text-small">
+                  <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                  <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+                  <span>11</span><span>12</span>
+                </div>
+              </div>
+
+              {/* Gantt Rows & SVG overlays */}
+              <div className="gantt-rows-container">
+                
+                {/* SVG Dependency Lines overlay */}
+                <svg className="gantt-svg-overlay" xmlns="http://www.w3.org/2000/svg">
+                  {/* Arrow marker */}
+                  <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b" />
+                    </marker>
+                  </defs>
+                  {/* Line 1: Foundation to Framing */}
+                  <path d="M 320 28 L 340 28 L 340 68 L 365 68" stroke="#f59e0b" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
+                  {/* Line 2: Framing to Milestones */}
+                  <path d="M 500 68 L 540 68 L 540 180 L 590 180" stroke="#f97316" strokeWidth="2" fill="none" markerEnd="url(#arrow)" />
+                </svg>
+
+                {/* Row 1: Foundation */}
+                <div className="gantt-row-simple">
+                  <div className="gantt-task-label">
+                    <span className="task-name">Foundation</span>
+                    <span className="task-status">Complete</span>
+                  </div>
+                  <div className="gantt-bar-track">
+                    <div 
+                      className="gantt-bar-fill yellow-glow" 
+                      style={{ 
+                        left: "5%", 
+                        width: `${Math.min(90, 32 * weatherDelayMultiplier)}%` 
+                      }}
                     >
-                      <span className="gantt-bar-progress" style={{ width: `${task.progress}%` }}></span>
-                      <span className="gantt-bar-label font-mono">{task.duration_days}d Base</span>
+                      <span className="bar-percentage">100%</span>
                     </div>
-
-                    {/* Delay Extension Bar */}
-                    {delayDiffWidth > 0 && (
-                      <div
-                        className="gantt-bar-delay"
-                        style={{
-                          width: `${delayDiffWidth}%`,
-                          left: `${baseWidth}%`
-                        }}
-                      >
-                        <span className="gantt-delay-label font-mono">
-                          +{Math.round(task.duration_days * (combinedMultiplier - 1))}d
-                        </span>
-                      </div>
-                    )}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
-      {/* ----------------- IoT ALERT CENTER ----------------- */}
-      <section id="alerts" className="alerts-section section-padding bg-tint">
-        <div className="section-header">
-          <span className="kicker">Live Incident Feed</span>
-          <h2>IoT Sensor Alerts Control Panel</h2>
-          <p className="header-paragraph">
-            Connected sensors monitor physical conditions on the construct site. Resolve alerts in real time to resume halted schedules and push status updates straight to the SQLite backend.
-          </p>
-        </div>
+                {/* Row 2: Framing */}
+                <div className="gantt-row-simple">
+                  <div className="gantt-task-label">
+                    <span className="task-name">Framing</span>
+                    <span className="task-status text-orange">Active</span>
+                  </div>
+                  <div className="gantt-bar-track">
+                    <div 
+                      className="gantt-bar-fill orange-glow" 
+                      style={{ 
+                        left: `${Math.min(80, 35 * weatherDelayMultiplier)}%`, 
+                        width: `${Math.min(60, 30 * supplyChainDelayMultiplier)}%` 
+                      }}
+                    >
+                      <span className="bar-percentage">60%</span>
+                    </div>
+                  </div>
+                </div>
 
-        <div className="alerts-layout">
-          <div className="alerts-list-container">
-            <div className="alerts-list-header">
-              <h3>Active Incident Feed ({alerts.filter((a) => a.status === "Active").length})</h3>
-              <button onClick={fetchData} className="refresh-btn" aria-label="Refresh data">
-                <RefreshCw size={14} />
-                <span>Sync DB</span>
-              </button>
+                {/* Row 3: Plumbing */}
+                <div className="gantt-row-simple">
+                  <div className="gantt-task-label">
+                    <span className="task-name">Plumbing</span>
+                    <span className="task-status">Upcoming</span>
+                  </div>
+                  <div className="gantt-bar-track">
+                    <div 
+                      className="gantt-bar-fill beige-glow" 
+                      style={{ 
+                        left: `${Math.min(85, 65 * combinedMultiplier)}%`, 
+                        width: `${Math.min(25, 10 * laborDelayMultiplier)}%` 
+                      }}
+                    >
+                      <span className="bar-percentage">10%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 4: Site Prep */}
+                <div className="gantt-row-simple">
+                  <div className="gantt-task-label">
+                    <span className="task-name">Site Prep</span>
+                    <span className="task-status">Complete</span>
+                  </div>
+                  <div className="gantt-bar-track">
+                    <div className="gantt-bar-fill yellow-glow" style={{ left: "1%", width: "15%" }}>
+                      <span className="bar-percentage">100%</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Milestones bar */}
+              <div className="gantt-milestones-row">
+                <div className="milestones-label">Milestones</div>
+                <div className="milestones-ticks-container">
+                  {/* Milestone 1 */}
+                  <div className="milestone-marker" style={{ left: `${Math.min(90, 35 * weatherDelayMultiplier)}%` }}>
+                    <div className="milestone-triangle yellow"></div>
+                    <span className="milestone-text font-highlight text-small">Site Complete</span>
+                  </div>
+
+                  {/* Milestone 2 */}
+                  <div className="milestone-marker" style={{ left: `${Math.min(95, 75 * combinedMultiplier)}%` }}>
+                    <div className="milestone-triangle white"></div>
+                    <span className="milestone-text font-highlight text-small">Phase 1 End</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="alerts-list">
+            <div className="carousel-indicators">
+              <span className="dot"></span>
+              <span className="dot active"></span>
+              <span className="dot"></span>
+            </div>
+          </section>
+
+          {/* COLUMN 3: LIVE IOT SENSOR ALERTS */}
+          <section className="panel col-iot-alerts">
+            <div className="panel-header-simple">
+              <h3>LIVE IOT SENSOR ALERTS</h3>
+              <span className="threedots">•••</span>
+            </div>
+
+            <span className="text-small text-muted mb-2 block-desc">Real-time feed with alerts:</span>
+            
+            <div className="alerts-vertical-list">
               {alerts.length === 0 ? (
                 <p className="no-data">No alerts logged in the database.</p>
               ) : (
-                alerts.map((alert) => (
-                  <div
-                    key={alert.id}
-                    className={`alert-card ${alert.status.toLowerCase()}`}
-                  >
-                    <div className="alert-card-icon">
-                      {alert.status === "Active" ? (
-                        <AlertTriangle className="icon-warning" size={20} />
-                      ) : (
-                        <CheckCircle2 className="icon-resolved" size={20} />
-                      )}
-                    </div>
+                alerts.map((alert) => {
+                  let alertClass = "warning-yellow";
+                  if (alert.sensor_type.includes("Wind") || alert.sensor_type.includes("Concrete")) {
+                    alertClass = "alert-orange";
+                  }
+                  if (alert.status === "Resolved") {
+                    alertClass = "alert-resolved-muted";
+                  }
 
-                    <div className="alert-card-info">
-                      <div className="alert-card-top">
-                        <strong className="alert-sensor">{alert.sensor_type}</strong>
-                        <span className="alert-value badge-tint font-mono">{alert.value}</span>
+                  return (
+                    <div key={alert.id} className={`live-alert-card ${alertClass}`}>
+                      <div className="alert-card-top-row">
+                        <div className="alert-title-box">
+                          <AlertTriangle size={14} className="alert-triangle-icon" />
+                          <span className="alert-label font-highlight">
+                            {alert.status === "Resolved" ? "[RESOLVED]" : alertClass === "alert-orange" ? "[Alert] High" : "[Warning] Info"}
+                          </span>
+                        </div>
+                        <span className="alert-time-badge font-mono">12:31 PM</span>
                       </div>
-                      <p className="alert-msg">{alert.message}</p>
-                      <span className="alert-time text-small text-muted font-mono">
-                        Logged: {new Date(alert.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
+                      
+                      <div className="alert-msg-row">
+                        <strong>{alert.sensor_type}: {alert.value}</strong>
+                        <p className="alert-message-text">{alert.message}</p>
+                      </div>
 
-                    <div className="alert-card-action">
-                      {alert.status === "Active" ? (
-                        <button
+                      {alert.status === "Active" && (
+                        <button 
                           onClick={() => handleResolveAlert(alert.id)}
-                          className="btn btn-sm btn-resolve"
+                          className="btn-resolve-link font-highlight"
                         >
-                          Resolve Alert
+                          Resolve Incident →
                         </button>
-                      ) : (
-                        <span className="resolved-tag">Resolved</span>
                       )}
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
+
+            <div className="carousel-indicators mt-4">
+              <span className="dot active"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </section>
+
+        </div>
+
+        {/* BOTTOM ROW: PROJECT STATUS (6 Metrics columns) */}
+        <section className="dashboard-status-row panel mt-4">
+          <div className="panel-header-simple full-width-header">
+            <h3>PROJECT STATUS</h3>
+            <span className="threedots">•••</span>
           </div>
 
-          {/* IoT Telemetry Info Panel */}
-          <div className="panel telemetry-info">
-            <h3 className="panel-title">
-              <ShieldAlert size={18} />
-              Telemetry Calibration
-            </h3>
-            <p className="text-small text-muted mb-4">
-              IoT alerts are automatically logged into SQLite by active crane, humidity, and concrete probes. 
-            </p>
-            <div className="telemetry-standards">
-              <div className="standard-row">
-                <span>Crane Wind Tolerance</span>
-                <span className="badge-tint font-mono">&lt; 35 mph</span>
+          <div className="status-metrics-grid">
+            <div className="status-metric-item">
+              <div className="metric-icon-circle">
+                <FolderOpen size={16} />
               </div>
-              <div className="standard-row">
-                <span>Ambient Pour Temp</span>
-                <span className="badge-tint font-mono">&gt; 35°F</span>
+              <div className="metric-texts">
+                <span className="metric-label">[Active Projects:</span>
+                <strong className="metric-val">4</strong>
               </div>
-              <div className="standard-row">
-                <span>Concrete Dry Threshold</span>
-                <span className="badge-tint font-mono">&lt; 75% RH</span>
+            </div>
+
+            <div className="status-metric-item">
+              <div className="metric-icon-circle">
+                <ClipboardList size={16} />
+              </div>
+              <div className="metric-texts">
+                <span className="metric-label">[Work Orders:</span>
+                <strong className="metric-val">29</strong>
+              </div>
+            </div>
+
+            <div className="status-metric-item">
+              <div className="metric-icon-circle accent-red">
+                <AlertTriangle size={16} />
+              </div>
+              <div className="metric-texts">
+                <span className="metric-label">[Issues:</span>
+                <strong className="metric-val text-red">{alerts.filter(a => a.status === 'Active').length} Active</strong>
+              </div>
+            </div>
+
+            <div className="status-metric-item">
+              <div className="metric-icon-circle">
+                <DollarSign size={16} />
+              </div>
+              <div className="metric-texts">
+                <span className="metric-label">[Budget:</span>
+                <strong className="metric-val">
+                  ${(simulatedBudget / 1000000).toFixed(1)}M / ${(maxBudget / 1000000).toFixed(0)}M
+                </strong>
+              </div>
+            </div>
+
+            <div className="status-metric-item">
+              <div className="metric-icon-circle accent-green">
+                <Calendar size={16} />
+              </div>
+              <div className="metric-texts">
+                <span className="metric-label">[Schedule:</span>
+                <strong className={`metric-val ${totalDelayDays > 0 ? "text-orange" : "text-green"}`}>
+                  {totalDelayDays > 0 ? `DELAYED (+${totalDelayDays}d)` : "ON TRACK"}
+                </strong>
+              </div>
+            </div>
+
+            <div className="status-metric-item">
+              <div className="metric-icon-circle accent-yellow">
+                <ShieldAlert size={16} />
+              </div>
+              <div className="metric-texts">
+                <span className="metric-label">[Safety Incidents:</span>
+                <div className="metric-val flex-badge">
+                  <span className="safety-zero-badge">0</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ----------------- SERVICES SECTION (Jhontraktor layout) ----------------- */}
+      </main>
+
+      {/* ----------------- SERVICES SECTION ----------------- */}
       <section id="services" className="services-section section-padding">
         <div className="section-header text-center">
           <span className="kicker text-center">What We Construct</span>
@@ -742,7 +755,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* ----------------- PORTFOLIO SECTION (Jhontraktor style) ----------------- */}
+      {/* ----------------- PORTFOLIO SECTION ----------------- */}
       <section id="portfolio" className="portfolio-section section-padding bg-tint">
         <div className="section-header">
           <span className="kicker">Completed Projects</span>
@@ -782,7 +795,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* ----------------- ROI CALCULATOR & SAVED ROI SCENARIOS ----------------- */}
+      {/* ----------------- ROI SAVINGS CALCULATOR ----------------- */}
       <section id="roi" className="roi-section section-padding">
         <div className="section-header">
           <span className="kicker">Calculate Your Savings</span>
@@ -867,7 +880,7 @@ export default function App() {
             </form>
           </div>
 
-          {/* ROI Results Display & Saved History */}
+          {/* ROI Results Display */}
           <div className="panel roi-result-card">
             <h3 className="panel-title">
               <TrendingUp size={18} />
@@ -943,7 +956,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Actual Form */}
+          {/* Form */}
           <div className="panel contact-form-card">
             <h3 className="panel-title">
               <Send size={18} />
@@ -1037,17 +1050,23 @@ export default function App() {
       </section>
 
       {/* ----------------- FOOTER ----------------- */}
-      <footer className="footer bg-tint">
+      <footer className="footer">
         <div className="footer-top">
           <div className="footer-logo">
-            <div className="logo-box">🏗️</div>
+            <div className="logo-hex">
+              <svg viewBox="0 0 100 100" className="hex-svg">
+                <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="#f59e0b" />
+                <polygon points="50,15 85,32 85,68 50,85 15,68 15,32" fill="#0a0e17" />
+                <path d="M40 35 L65 35 L45 65 L60 65" stroke="#f59e0b" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              </svg>
+            </div>
             <span className="logo-text">Construct<span className="logo-accent">IQ</span></span>
           </div>
           <p className="footer-tagline">Integrated Construction Operations & Predictive Schedule Intelligence</p>
         </div>
         <div className="footer-bottom text-small text-muted">
           <span>&copy; 2026 ConstructIQ Inc. All rights reserved. Persistent SQLite backend loaded.</span>
-          <a href="#home" className="back-top-link">Back to top ↑</a>
+          <a href="#" className="back-top-link">Back to top ↑</a>
         </div>
       </footer>
     </div>
